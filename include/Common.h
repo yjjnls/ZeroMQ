@@ -13,5 +13,12 @@
 //gtest
 #include <gtest/gtest.h>
 
+
 #define ARRAY_SIZE(array ) (sizeof(array) / sizeof(array[0]))
+
+#ifdef WIN32
+	#define SLEEP(ms) Sleep(ms)
+#else
+	#define SLEEP(ms) sleep(ms/1000)
+#endif
 
