@@ -1,0 +1,17 @@
+//ZeroMQ
+#include <zeromq/zmq.h>
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <list>
+#include <map>
+
+//boost
+#include <boost/thread.hpp>
+
+//gtest
+#include <gtest/gtest.h>
+
+#define ARRAY_SIZE(array ) (sizeof(array) / sizeof(array[0]))
+
