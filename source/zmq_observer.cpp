@@ -7,12 +7,12 @@ namespace
 	std::string port = "8888";
 	const std::string zeromq_server = std::string("tcp://127.0.0.1:") + port;
 	bool stop = false;
-	void ServerFun()
+	void PubFun()
 	{
 		int rc;
-		void* ctx = zmq_ctx_new();
+		void *ctx = zmq_ctx_new();
 		ASSERT_TRUE(ctx != NULL);
-		void* socket = zmq_socket(ctx, ZMQ_ROUTER);
+		void *socket = zmq_socket(ctx, ZMQ_ROUTER);
 		ASSERT_TRUE(socket != NULL);
 		rc = zmq_bind(socket, zeromq_server.c_str());
 		ASSERT_TRUE(rc == 0);
@@ -59,12 +59,12 @@ namespace
 		zmq_ctx_term(ctx);
 
 	}
-	void ClientFun()
+	void SubFun()
 	{
 		int rc;
-		void* ctx = zmq_ctx_new();
+		void *ctx = zmq_ctx_new();
 		ASSERT_TRUE(ctx != NULL);
-		void* socket = zmq_socket(ctx, ZMQ_DEALER);
+		void *socket = zmq_socket(ctx, ZMQ_DEALER);
 		ASSERT_TRUE(socket != NULL);
 		rc = zmq_connect(socket, zeromq_server.c_str());
 		ASSERT_TRUE(rc == 0);
@@ -111,14 +111,25 @@ namespace
 
 /******************************************************
 
-one zmq_msg_t sent, one zmq_msg_t received
-the size of the received zmq_msg_t will be adjusted automatically
+Use the ROUTER-DEALER pattern to implement a simple observer pattern.
+
+The ROUTER ZeroMQ socket plays the role of publisher, and the DEALER 
+ZeroMQ socket plays the role of subscriber. The DEALER socket first 
+send a message to subscribe. And the ROUTER socket stores the id of 
+every subscriber, to which the messages will be published to.
+Most common observer patterns may be implemented using the PUB-SUB ZeroMQ socket. 
+But different publishers share one url(socket) to publish different topics. 
+The subscribers will receive all topics and must filter the topics and the 
+sub-topics by themselves, which may be chaotic when the requirements are completed. 
+In this pattern, different publishers are corresponding to different paths in the url. 
+The ROUTER socket could classify different subscribers by their ids to the specific 
+path(publisher). The the subscribers will only receive the topic they subscribed.
 
 ******************************************************/
 TEST(ZeroMQ, ZMQ_BROKER)
 {
-	boost::thread thrd1(&ServerFun);
-	boost::thread thrd2(&ClientFun);
+	boost::thread thrd1(&PubFun);
+	boost::thread thrd2(&SubFun);
 	SLEEP(1000);
 	stop = true;
 	thrd1.join();
