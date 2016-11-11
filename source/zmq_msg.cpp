@@ -4,6 +4,10 @@
 
 Test the bind and connect pattern of ZEROMQ socket.
 REQ-REP is used in this test, so are PUSH-PULL and PUB-SUB.
+Test the bind and connect pattern of ZeroMQ socket.
+One ZeroMQ socket can be bind or connect to different urls.
+One url can be connceted by multiple ZeroMQ sockets.
+But one url can only be bind with only one ZeroMQ socket.
 
 ******************************************************/
 TEST(ZeroMQ, ZMQ_SOCKET)
@@ -12,16 +16,16 @@ TEST(ZeroMQ, ZMQ_SOCKET)
 	const std::string url2 = "tcp://127.0.0.1:5556";
 	int rc;
 
-	void* ctx = zmq_ctx_new();
+	void *ctx = zmq_ctx_new();
 	ASSERT_TRUE(ctx != NULL);
 	
-	void* server_socket1 = zmq_socket(ctx, ZMQ_REP);
+	void *server_socket1 = zmq_socket(ctx, ZMQ_REP);
 	ASSERT_TRUE(server_socket1 != NULL);
-	void* server_socket2 = zmq_socket(ctx, ZMQ_REP);
+	void *server_socket2 = zmq_socket(ctx, ZMQ_REP);
 	ASSERT_TRUE(server_socket2 != NULL);
-	void* client_socket1 = zmq_socket(ctx, ZMQ_REQ);
+	void *client_socket1 = zmq_socket(ctx, ZMQ_REQ);
 	ASSERT_TRUE(client_socket1 != NULL);
-	void* client_socket2 = zmq_socket(ctx, ZMQ_REQ);
+	void *client_socket2 = zmq_socket(ctx, ZMQ_REQ);
 	ASSERT_TRUE(client_socket2 != NULL);
 
 	//one socket can bind to different urls
@@ -64,9 +68,9 @@ namespace
 	void ServerFun()
 	{
 		int rc;
-		void* ctx = zmq_ctx_new();
+		void *ctx = zmq_ctx_new();
 		ASSERT_TRUE(ctx != NULL);
-		void* socket = zmq_socket(ctx, ZMQ_REP);
+		void *socket = zmq_socket(ctx, ZMQ_REP);
 		ASSERT_TRUE(socket != NULL);
 		rc = zmq_bind(socket, zeromq_server.c_str());
 		ASSERT_TRUE(rc == 0);
@@ -98,9 +102,9 @@ namespace
 	void ClientFun()
 	{
 		int rc;
-		void* ctx = zmq_ctx_new();
+		void *ctx = zmq_ctx_new();
 		ASSERT_TRUE(ctx != NULL);
-		void* socket = zmq_socket(ctx, ZMQ_REQ);
+		void *socket = zmq_socket(ctx, ZMQ_REQ);
 		ASSERT_TRUE(socket != NULL);
 		rc = zmq_connect(socket, zeromq_server.c_str());
 		ASSERT_TRUE(rc == 0);
@@ -123,8 +127,10 @@ namespace
 
 /******************************************************
 
-one zmq_msg_t sent, one zmq_msg_t received
-the size of the received zmq_msg_t will be adjusted automatically
+Use struct zmq_msg_t to send and recvive messages in multiple parts.
+
+The number of message parts the server received is corresponding to that the client sent. 
+The function zmq_msg_recv will automatically adjust the size of zmq_msg_t to receive an intact message part.
 
 ******************************************************/
 TEST(ZeroMQ, ZMQ_MSG)

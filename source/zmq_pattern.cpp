@@ -9,10 +9,10 @@ namespace
 	{
 		int rc;
 
-		void* ctx = zmq_ctx_new();
+		void *ctx = zmq_ctx_new();
 		ASSERT_TRUE(ctx != NULL);
 
-		void* socket = zmq_socket(ctx, ZMQ_PUSH);
+		void *socket = zmq_socket(ctx, ZMQ_PUSH);
 		ASSERT_TRUE(socket != NULL);
 		rc = zmq_bind(socket, url.c_str());
 		ASSERT_EQ(rc, 0);
@@ -36,10 +36,10 @@ namespace
 	{
 		int rc;
 
-		void* ctx = zmq_ctx_new();
+		void *ctx = zmq_ctx_new();
 		ASSERT_TRUE(ctx != NULL);
 
-		void* socket = zmq_socket(ctx, ZMQ_PULL);
+		void *socket = zmq_socket(ctx, ZMQ_PULL);
 		ASSERT_TRUE(socket != NULL);
 		rc = zmq_connect(socket, url.c_str());
 		ASSERT_EQ(rc, 0);
@@ -61,7 +61,7 @@ namespace
 				zmq_msg_recv(&msg, socket, 0);
 				result.append(static_cast<char*>(zmq_msg_data(&msg)), zmq_msg_size(&msg));
 				print_lock.lock();
-				std::cout << "PULL - " << num << " : " << result << std::endl;
+				std::cout << "Worker - " << num << " : " << result << std::endl;
 				print_lock.unlock();
 				zmq_msg_close(&msg);
 			}
