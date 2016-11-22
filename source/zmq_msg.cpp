@@ -6,7 +6,7 @@ Test the bind and connect pattern of ZEROMQ socket.
 REQ-REP is used in this test, so are PUSH-PULL and PUB-SUB.
 Test the bind and connect pattern of ZeroMQ socket.
 One ZeroMQ socket can be bind or connect to different urls.
-One url can be connceted by multiple ZeroMQ sockets.
+One url can be connected by multiple ZeroMQ sockets.
 But one url can only be bind with only one ZeroMQ socket.
 
 ******************************************************/
